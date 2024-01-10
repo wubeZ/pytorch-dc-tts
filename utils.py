@@ -7,6 +7,7 @@ import glob
 import torch
 import math
 import requests
+import gdown
 from tqdm import tqdm
 from skimage.io import imsave
 from skimage import img_as_ubyte
@@ -47,6 +48,16 @@ def save_checkpoint(logdir, epoch, global_step, model, optimizer):
     }
     torch.save(checkpoint, checkpoint_file_name)
     del checkpoint
+
+
+def download_file_from_google_drive(id, destination):
+    direct_download_link = f'https://drive.google.com/uc?id={id}'
+    try:
+        gdown.download(direct_download_link, destination, quiet=False)
+        print("Download completed successfully")
+    except Exception as e:
+        print(f"Download failed: {str(e)}")
+        sys.exit(1)
 
 
 def download_file(url, file_path):

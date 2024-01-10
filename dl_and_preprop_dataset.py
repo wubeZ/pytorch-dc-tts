@@ -17,7 +17,7 @@ import pandas as pd
 from hparams import HParams as hp
 from zipfile import ZipFile
 from audio import preprocess
-from utils import download_file
+from utils import download_file, download_file_from_google_drive
 from datasets.mb_speech import MBSpeech
 from datasets.lj_speech import LJSpeech
 
@@ -28,26 +28,20 @@ args = parser.parse_args()
 if args.dataset == 'ljspeech':
     dataset_file_name = 'LJSpeech-1.1.tar.bz2'
     datasets_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'datasets')
+    dataset_file_path = os.path.join(datasets_path, dataset_file_name)
     dataset_path = os.path.join(datasets_path, 'LJSpeech-1.1')
-
-    if os.path.isdir(dataset_path) and False:
-        print("LJSpeech dataset folder already exists")
-        sys.exit(0)
-    else:
-        dataset_file_path = os.path.join(datasets_path, dataset_file_name)
-        if not os.path.isfile(dataset_file_path):
-            url = "http://data.keithito.com/data/speech/%s" % dataset_file_name
-            download_file(url, dataset_file_path)
-        else:
-            print("'%s' already exists" % dataset_file_name)
-
-        print("extracting '%s'..." % dataset_file_name)
-        os.system('cd %s; tar xvjf %s' % (datasets_path, dataset_file_name))
-
-        # pre process
-        print("pre processing...")
-        lj_speech = LJSpeech([])
-        preprocess(dataset_path, lj_speech)
+    
+    if not os.path.isfile(dataset_file_path):
+        id = "1CxkN7QJ37nB0OMt3oVkKbIJjm8cVI94t" 
+        download_file_from_google_drive(id, dataset_file_path)
+    print("extracting '%s'..." % dataset_file_name)
+    print(dataset_file_path, datasets_path)
+    os.system('cd %s; tar -xvjf %s' % (datasets_path, dataset_file_path))
+    
+    # pre process
+    print("pre processing...")
+    lj_speech = LJSpeech([])
+    preprocess(dataset_path, lj_speech)
 elif args.dataset == 'mbspeech':
     dataset_name = 'MBSpeech-1.0'
     datasets_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'datasets')
