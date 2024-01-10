@@ -27,9 +27,9 @@ def read_metadata(metadata_file):
     transcript = os.path.join(metadata_file)
     lines = codecs.open(transcript, 'r', 'utf-8').readlines()
     for line in lines:
-        parts = line.strip().split("|")
+        parts = line.strip().strip('"').split("|")
         fname = parts[0]
-        text = parts[2]
+        text = parts[1]
         
         fnames.append(fname)
 
